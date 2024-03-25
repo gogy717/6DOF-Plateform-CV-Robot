@@ -15,15 +15,15 @@ pInversResult = (c_double*6)()
 I =0
 J =0
 
-XP = 40
-YP = 40
-ZP = 168+10
-YAW = 0
+XP = +10
+YP = -0
+ZP = 168+20
+YAW = 5
 PITCH = 0
 ROLL = 0
 print(pInversResult[0], pInversResult[1], pInversResult[2], pInversResult[3], pInversResult[4], pInversResult[5])
 # ret = pRSS6RBT_Inverse.InK6RSS(c_double(XP), c_double(YP), c_double(ZP), c_double(YAW), c_double(PITCH), c_double(ROLL), pointer(pInversResult))
-# print(ret)
+# print(ret)S
 
 pRSS6RBT_Inverse = cdll.LoadLibrary('./InK6RSSV1.so')
 
@@ -42,51 +42,27 @@ for i in range(0,6):
         angle =  init_an[i] - pInversResult[i] 
     targetangle.append(int(angle))
 print(targetangle)
-# T0 = time.time()
-# for XP in range(-100, 100, 5) :
-#     for YP in range(-100, 100, 5) :
-#         for ZP in range(168, 228, 5) :
-#             for YAW in range(-50, 50, 5) :
-#                 for PITCH in range(-30, 30, 5) :
-#                     for ROLL in range(-30, 30, 5) :
-#                         I=I+1
-#                         ret = pRSS6RBT_Inverse.InK6RSS(c_double(XP), c_double(YP), c_double(ZP), c_double(YAW), c_double(PITCH), c_double(ROLL), pointer(pInversResult))
-#                         if  (I%100000)==0 :
-#                             print("第", I, "次, 经过了: ", time.time()-T0, "s")
-#                         if  (pInversResult[0] == -360) or \
-#                             (pInversResult[1] == -360) or \
-#                             (pInversResult[2] == -360) or \
-#                             (pInversResult[3] == -360) or \
-#                             (pInversResult[4] == -360) or \
-#                             (pInversResult[5] == -360) or \
-#                             (ret == 0 )                     :
-#                             # print("NAN")
-#                             J = J+1
-#                         else:
-#                             # print(pInversResult[0], pInversResult[1], pInversResult[2], pInversResult[3], pInversResult[4], pInversResult[5])
-#                             File.write(str(XP))
-#                             File.write("    ")
-#                             File.write(str(YP))
-#                             File.write("    ")
-#                             File.write(str(ZP))
-#                             File.write("    ")
-#                             File.write(str(YAW))
-#                             File.write("    ")
-#                             File.write(str(PITCH))
-#                             File.write("    ")
-#                             File.write(str(ROLL))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[0]))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[1]))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[2]))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[3]))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[4]))
-#                             File.write("    ")
-#                             File.write(str(pInversResult[5]))
-#                             File.write("\n")
 
 
+
+import socket
+# 单片机的IP地址和端口号
+ESP32_IP = '192.168.1.105' # 请替换为您的ESP32的IP地址
+PORT = 80 # 端口号，根据您的设置可能需要更改
+
+def convert_angle_to_string(angles):
+    return 'A'+','.join(str(angle) for angle in angles)+'\r'
+
+# 创建一个socket对象
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+# 连接到服务器
+s.connect((ESP32_IP, PORT))
+
+angle_data=convert_angle_to_string(targetangle)
+
+# 发送数据
+s.sendall(angle_data.encode())
+
+# 关闭连接
+s.close()

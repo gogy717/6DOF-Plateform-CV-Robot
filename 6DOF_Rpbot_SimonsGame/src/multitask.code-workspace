@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"name": "multitask",
+			"path": "../../../../Documents/PlatformIO/Projects/multitask"
+		},
+		{
+			"name": "servo_manual",
+			"path": "../../../../Documents/PlatformIO/Projects/servo_manual"
+		},
+		{
+			"path": "../.."
+		},
+		{
+			"name": "6DOF_Rpbot_SimonsGame",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}
